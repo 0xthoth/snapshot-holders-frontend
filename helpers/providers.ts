@@ -8,7 +8,7 @@ export class Providers {
   /**
    * Returns a provider url for a given network
    */
-  public static getProviderUrl(networkId: NetworkId) {
+  public static getProviderUrl(networkId: NetworkId): any {
     const [url] = Environment.getNodeUrls(networkId);
 
     return url;

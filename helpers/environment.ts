@@ -58,7 +58,7 @@ export class Environment {
       fallback: "false",
     });
 
-  public static getNodeUrls = (networkId: NetworkId) => {
+  public static getNodeUrls = (networkId: NetworkId): any => {
     switch (networkId) {
       case NetworkId.MAINNET:
         return this._get({
@@ -135,6 +135,12 @@ export class Environment {
           key: `REACT_APP_BSC_NODE_URL`,
           fallback: "https://bsc-dataseed.binance.org",
         });
+      case NetworkId.MOVR:
+        return this._get({
+          key: `REACT_APP_MOVR_NODE_URL`,
+          fallback: "https://rpc.moonriver.moonbeam.network",
+        });
+
     }
   };
 }

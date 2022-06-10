@@ -1,16 +1,7 @@
 import { useMemo, useState } from "react";
-import { useQuery, QueryOptions } from "react-query";
+import { useQuery, QueryOptions, UseQueryResult } from "react-query";
 import { apolloExt } from "../apollo-client";
-import { ethers } from "ethers";
-import { NetworkId } from "helpers/networkDetails";
-import MasterChefABI from "abis/MasterChef.json";
-import { multicall } from "helpers/multicall";
-import {
-  JsonRpcProvider,
-  StaticJsonRpcProvider,
-} from "@ethersproject/providers";
-import { iAddresses } from "constant";
-import { getMarketPrice, getWSWORDIndex } from "helpers";
+import { getHolderInfo } from "helpers";
 
 type Holder = {
   id: string;
@@ -20,8 +11,7 @@ type Holder = {
   updatedAt: string;
 };
 
-export const useStake66Holders = (options: QueryOptions) => {
-  const stake66HoldersQuery = `
+const stake66HoldersQuery = `
     query {
       holders(
         first: 1000, 
@@ -32,12 +22,12 @@ export const useStake66Holders = (options: QueryOptions) => {
         id
         address
         balance
-        stakedBlock
         updatedAt
       }
     }
   `;
 
+export const useStake66Holders = (options: QueryOptions): UseQueryResult<any> => {
   return useQuery(
     "stake66_holders",
     async () => {
@@ -45,111 +35,57 @@ export const useStake66Holders = (options: QueryOptions) => {
         stake66HoldersQuery,
         "https://api.thegraph.com/subgraphs/name/0xthoth/snapshot-holder-v1"
       );
+      if (!response?.data.holders) return []
       return response?.data.holders;
     },
     options
   );
 };
 
-export const useStake66HoldersInfo = (
-  provider: JsonRpcProvider | StaticJsonRpcProvider,
-  networkID: NetworkId
-) => {
+export const useStake66HoldersMovr = (options: QueryOptions): UseQueryResult<any> => {
+  return useQuery(
+    "stake66_holders_movr",
+    async () => {
+      const response = await apolloExt<{ holders: Holder[] }>(
+        stake66HoldersQuery,
+        "https://api.thegraph.com/subgraphs/name/0xthoth/stake66-holders-movr"
+      );
+      if (!response?.data.holders) return []
+      return response?.data.holders;
+    },
+    options
+  );
+};
+
+export const useStake66HoldersInfo = () => {
   const { data } = useStake66Holders({});
-  const [holders, setHolders] = useState([]);
+  const [holders, setHolders] = useState<{
+    [key: number]: Array<any>
+  }>({
+    56: [],
+    1285: []
+  });
+  const { data: movrData } = useStake66HoldersMovr({});
 
   useMemo(async () => {
-    if (!data || !networkID) return [];
+    if (!data || !data?.length || !movrData || !movrData?.length) return [];
 
-    const userBoostQueries: any[] = [];
-    const userStakedBlockQueries: any[] = [];
-    const userStakingBalanceQueries: any[] = [];
-    const userPendingRewardQueries: any[] = [];
+    const holderList = await Promise.all([
+      getHolderInfo({
+        data,
+        networkID: 56
+      }),
+      getHolderInfo({
+        data: movrData,
+        networkID: 1285
+      })
+    ]);
 
-    data.forEach((holder) => {
-      userBoostQueries.push({
-        address: iAddresses[networkID].WSWORD_MASTERCHEF,
-        name: "getUserBoostMultipiler",
-        params: [0, holder.address],
-      });
-      userStakedBlockQueries.push({
-        address: iAddresses[networkID].WSWORD_MASTERCHEF,
-        name: "getUserStakeBlock",
-        params: [0, holder.address],
-      });
-      userStakingBalanceQueries.push({
-        address: iAddresses[networkID].WSWORD_MASTERCHEF,
-        name: "userInfo",
-        params: [0, holder.address],
-      });
-      userPendingRewardQueries.push({
-        address: iAddresses[networkID].WSWORD_MASTERCHEF,
-        name: "pendingReward",
-        params: [0, holder.address, true],
-      });
+    setHolders({
+      56: holderList[0],
+      1285: holderList[1]
     });
-
-    const dataBoostQueries = await multicall(
-      MasterChefABI,
-      userBoostQueries,
-      networkID
-    );
-    const dataStakedBlockQueries = await multicall(
-      MasterChefABI,
-      userStakedBlockQueries,
-      networkID
-    );
-    const dataStakingBlanceQueries = await multicall(
-      MasterChefABI,
-      userStakingBalanceQueries,
-      networkID
-    );
-    const dataPendingRewardQueries = await multicall(
-      MasterChefABI,
-      userPendingRewardQueries,
-      networkID
-    );
-    const currentBlock = await provider.getBlockNumber();
-    const mkPrice = await getMarketPrice({
-      provider,
-      networkID,
-    });
-    const wIndex = await getWSWORDIndex({
-      provider,
-      networkID,
-    });
-
-    if (
-      !dataBoostQueries ||
-      !dataStakedBlockQueries ||
-      !dataStakingBlanceQueries ||
-      !dataPendingRewardQueries
-    )
-      return [];
-
-    const hds = data.map((d, i) => {
-      const balance = ethers.utils.formatUnits(
-        dataStakingBlanceQueries[i][0],
-        "ether"
-      );
-      const balanceToTEM = Number(balance) * wIndex;
-      const balanceTEMValue = balanceToTEM * Number(mkPrice);
-
-      return {
-        ...d,
-        boost: `${Number(dataBoostQueries[i][0]) / 1000}x`,
-        stakedBlock: `${currentBlock - Number(dataStakedBlockQueries[i][0])}`,
-        staking: balance,
-        balanceToTEM,
-        balanceTEMValue,
-        reward: ethers.utils.formatUnits(
-          dataPendingRewardQueries[i][0],
-          "ether"
-        ),
-      };
-    });
-    setHolders(hds);
-  }, [data]);
+  }, [data, movrData]);
 
   return holders;
 };

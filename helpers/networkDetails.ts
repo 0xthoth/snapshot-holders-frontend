@@ -24,6 +24,8 @@ export enum NetworkId {
 
   BSC = 56,
   TESTNET_BSC = 97,
+
+  MOVR = 1285
 }
 
 interface IAddresses {
@@ -321,6 +323,20 @@ export const NETWORKS: { [key: number]: INetwork } = {
     image: "/static/img/tokens/matic.svg",
     imageAltText: "BSC Logo",
     uri: () => Providers.getProviderUrl(NetworkId.BSC),
+  },
+  [NetworkId.MOVR]: {
+    chainName: "Moonriver",
+    chainId: 1285,
+    nativeCurrency: {
+      name: "MOVR",
+      symbol: "MOVR",
+      decimals: 18,
+    },
+    rpcUrls: ["https://rpc.moonriver.moonbeam.network"],
+    blockExplorerUrls: ["https://blockscout.moonriver.moonbeam.network/"],
+    image: "/static/img/tokens/matic.svg",
+    imageAltText: "BSC Logo",
+    uri: () => Providers.getProviderUrl(NetworkId.MOVR),
   },
 };
 

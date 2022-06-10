@@ -1,11 +1,10 @@
 import type { NextPage } from "next";
-import Layout from "@/components/Layout";
+
+import Holders from "./holders";
 
 const Home: NextPage = () => {
   return (
-    <>
-      <Layout />
-    </>
+    <Holders />
   );
 };
 

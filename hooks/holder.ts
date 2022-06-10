@@ -57,18 +57,37 @@ export const useStake66HoldersMovr = (options: QueryOptions): UseQueryResult<any
   );
 };
 
+export const useStake66HoldersOne = (options: QueryOptions): UseQueryResult<any> => {
+  return useQuery(
+    "stake66_holders_one",
+    async () => {
+      const response = await apolloExt<{ holders: Holder[] }>(
+        stake66HoldersQuery,
+        "https://one.subgraph.templar.finance/subgraphs/name/0xthoth/stake66-holders-one"
+      );
+      if (!response?.data.holders) return []
+      return response?.data.holders;
+    },
+    options
+  );
+};
+
 export const useStake66HoldersInfo = () => {
   const { data } = useStake66Holders({});
+  const { data: movrData } = useStake66HoldersMovr({});
+  const { data: oneData } = useStake66HoldersOne({});
+
   const [holders, setHolders] = useState<{
     [key: number]: Array<any>
   }>({
     56: [],
-    1285: []
+    1285: [],
+    1666600000: []
   });
-  const { data: movrData } = useStake66HoldersMovr({});
+
 
   useMemo(async () => {
-    if (!data || !data?.length || !movrData || !movrData?.length) return [];
+    if (!data || !movrData || !oneData) return [];
 
     const holderList = await Promise.all([
       getHolderInfo({
@@ -78,12 +97,17 @@ export const useStake66HoldersInfo = () => {
       getHolderInfo({
         data: movrData,
         networkID: 1285
+      }),
+      getHolderInfo({
+        data: oneData,
+        networkID: 1666600000
       })
     ]);
 
     setHolders({
       56: holderList[0],
-      1285: holderList[1]
+      1285: holderList[1],
+      1666600000: holderList[2]
     });
   }, [data, movrData]);
 

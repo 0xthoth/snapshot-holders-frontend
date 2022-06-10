@@ -25,7 +25,9 @@ export enum NetworkId {
   BSC = 56,
   TESTNET_BSC = 97,
 
-  MOVR = 1285
+  MOVR = 1285,
+
+  ONE = 1666600000
 }
 
 interface IAddresses {
@@ -337,6 +339,20 @@ export const NETWORKS: { [key: number]: INetwork } = {
     image: "/static/img/tokens/matic.svg",
     imageAltText: "BSC Logo",
     uri: () => Providers.getProviderUrl(NetworkId.MOVR),
+  },
+  [NetworkId.ONE]: {
+    chainName: "Harmony",
+    chainId: 1666600000,
+    nativeCurrency: {
+      name: "ONE",
+      symbol: "ONE",
+      decimals: 18,
+    },
+    rpcUrls: ["https://api.harmony.one"],
+    blockExplorerUrls: ["https://explorer.harmony.one"],
+    image: "/static/img/tokens/matic.svg",
+    imageAltText: "BSC Logo",
+    uri: () => Providers.getProviderUrl(NetworkId.ONE),
   },
 };
 

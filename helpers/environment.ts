@@ -140,7 +140,11 @@ export class Environment {
           key: `REACT_APP_MOVR_NODE_URL`,
           fallback: "https://rpc.moonriver.moonbeam.network",
         });
-
+      case NetworkId.ONE:
+        return this._get({
+          key: `REACT_APP_ONE_NODE_URL`,
+          fallback: "https://api.harmony.one",
+        });
     }
   };
 }

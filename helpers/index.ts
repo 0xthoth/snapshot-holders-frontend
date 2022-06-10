@@ -51,11 +51,11 @@ export async function getMarketPrice({ networkID, provider }: IBaseAsyncThunk) {
 
   const reserves = await pairContract.getReserves();
 
-  const marketPrice = reserves[1] / reserves[0];
+  let marketPrice = reserves[1] / reserves[0];
 
-  // if ([43114, 1287, 1285, 1285, 97, 1666700000].includes(networkID)) {
-  //   marketPrice = reserves[0] / reserves[1];
-  // }
+  if ([43114, 1287, 1285, 1285, 97, 1666700000].includes(networkID)) {
+    marketPrice = reserves[0] / reserves[1];
+  }
 
   return marketPrice / Math.pow(10, 9);
 }

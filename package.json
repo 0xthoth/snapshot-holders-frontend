@@ -1,0 +1,54 @@
+{
+  "name": "crusade-money-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "scripts": {
+    "dev": "set NODE_ENV=development && next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.6.6",
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
+    "@ethersproject/abi": "^5.6.3",
+    "@ethersproject/providers": "^5.6.5",
+    "@ledgerhq/iframe-provider": "^0.4.2",
+    "@mui/icons-material": "^5.8.2",
+    "@mui/material": "^5.8.2",
+    "@mui/x-data-grid": "^5.12.0",
+    "@reduxjs/toolkit": "^1.8.2",
+    "@walletconnect/web3-provider": "^1.7.8",
+    "dayjs": "^1.11.3",
+    "ethers": "^5.6.8",
+    "formik": "^2.2.9",
+    "fs": "^0.0.1-security",
+    "graphql": "^16.5.0",
+    "lodash": "^4.17.21",
+    "next": "12.1.6",
+    "next-redux-wrapper": "^7.0.5",
+    "react": "18.1.0",
+    "react-dom": "18.1.0",
+    "react-ga": "^3.3.0",
+    "react-query": "^3.39.0",
+    "react-redux": "^8.0.2",
+    "redux": "^4.2.0",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^2.4.1",
+    "web3": "^1.7.3",
+    "web3-utils": "^1.7.3",
+    "web3modal": "^1.9.7"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.31",
+    "@types/react": "18.0.9",
+    "@types/react-dom": "18.0.3",
+    "eslint": "8.15.0",
+    "eslint-config-next": "12.1.6",
+    "typescript": "4.6.4"
+  }
+}

@@ -90,25 +90,25 @@ const Holders = () => {
       <Grid container spacing={5} sx={{ mt: 1 }}>
         <Grid item xs={12} sm={6} md={3}>
           <Box>Total Balance</Box>
-          <Typography component="div" variant="h3" color="#7d0707" fontWeight="bold">
+          <Typography component="div" variant="h3" color="#7d0707" fontWeight="bold" id="totalBalance">
             {!balances.totalBalance ? <Skeleton /> : numberFormat.format(Number(balances.totalBalance))}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Box>BSC Balance</Box>
-          <Typography component="div" variant="h3">
+          <Typography component="div" variant="h3" id="bscBalance">
             {!balances.bscBalance ? <Skeleton /> : numberFormat.format(Number(balances.bscBalance))}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Box>MOVR Balance</Box>
-          <Typography component="div" variant="h3">
+          <Typography component="div" variant="h3" id="movrBalance">
             {!balances.movrBalance ? <Skeleton /> : numberFormat.format(Number(balances.movrBalance))}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Box>ONE Balance</Box>
-          <Typography component="div" variant="h3">
+          <Typography component="div" variant="h3" id="oneBalance">
             {!balances.oneBalance ? <Skeleton /> : numberFormat.format(Number(balances.oneBalance))}
           </Typography>
           <Alert severity="warning">Syncing — The data is not correct!</Alert>

@@ -13,7 +13,7 @@ export const currencyFormatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 });
 
-export const numberFormat = new Intl.NumberFormat('en-IN', { minimumFractionDigits: 3 })
+export const numberFormat = new Intl.NumberFormat('en-IN', { minimumFractionDigits: 5 })
 
 export function shouldTriggerSafetyCheck() {
   const _storage = window.sessionStorage;

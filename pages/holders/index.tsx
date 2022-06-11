@@ -14,7 +14,6 @@ import TabPanel from '@mui/lab/TabPanel';
 // import dayjs from "dayjs";
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
 import { useStake66HoldersInfo } from "hooks/holder";
 import { numberFormat, currencyFormatter } from "helpers";
 
@@ -111,7 +110,6 @@ const Holders = () => {
           <Typography component="div" variant="h3" id="oneBalance">
             {!balances.oneBalance ? <Skeleton /> : numberFormat.format(Number(balances.oneBalance))}
           </Typography>
-          <Alert severity="warning">Syncing — The data is not correct!</Alert>
         </Grid>
       </Grid>
 
@@ -133,7 +131,13 @@ const Holders = () => {
               columns={columns}
               pageSize={100}
               rowsPerPageOptions={[100]}
-              components={{ Toolbar: GridToolbar }}
+              components={{
+                Toolbar: (data) => <GridToolbar {...data} csvOptions={{
+                  fileName: 'BSC Holders'
+                }} />
+              }}
+              isRowSelectable={() => false}
+
             />
           </div>
         </TabPanel>
@@ -146,7 +150,12 @@ const Holders = () => {
               columns={columns}
               pageSize={100}
               rowsPerPageOptions={[100]}
-              components={{ Toolbar: GridToolbar }}
+              components={{
+                Toolbar: (data) => <GridToolbar {...data} csvOptions={{
+                  fileName: 'Moonriver Holders'
+                }} />
+              }}
+              isRowSelectable={() => false}
             />
           </div>
         </TabPanel>
@@ -159,7 +168,12 @@ const Holders = () => {
               columns={columns}
               pageSize={100}
               rowsPerPageOptions={[100]}
-              components={{ Toolbar: GridToolbar }}
+              components={{
+                Toolbar: (data) => <GridToolbar {...data} csvOptions={{
+                  fileName: 'Harmony Holders'
+                }} />
+              }}
+              isRowSelectable={() => false}
             />
           </div>
         </TabPanel>

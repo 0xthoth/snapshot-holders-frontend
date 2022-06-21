@@ -11,6 +11,10 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 // import dayjs from "dayjs";
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
@@ -26,13 +30,9 @@ const columns: GridColDef[] = [
   { field: "boost", headerName: "Boost", width: 80, align: "right" },
   { field: "stakedBlock", headerName: "Staked Block", width: 150, align: "right" },
   { field: "reward", headerName: "Reward", width: 150, valueFormatter: ({ value }) => numberFormat.format(Number(value)), align: "right" },
-  // {
-  //   field: "updatedAt",
-  //   headerName: "Updated At",
-  //   width: 200,
-  //   valueGetter: (params: GridValueGetterParams) =>
-  //     `${dayjs.unix(params.row.updatedAt)}`,
-  // },
+  {
+    field: "chains", headerName: "Chains", width: 150, valueFormatter: ({ value }) => value.filter((v: any) => v !== undefined).toString(), align: "left"
+  },
 ];
 
 const TabStyle = styled(Tab)`
@@ -42,8 +42,15 @@ const TabStyle = styled(Tab)`
   }
 `;
 
+
 const Holders = () => {
   const [value, setValue] = useState('1');
+  const [totalType, setTotalType] = useState<'balance' | 'balanceToTEM' | 'balanceTEMValue'>('balanceToTEM');
+
+  const handleTotalTypeChange = (event: SelectChangeEvent) => {
+    setTotalType(event.target.value as 'balance' | 'balanceToTEM' | 'balanceTEMValue');
+  };
+
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -64,10 +71,12 @@ const Holders = () => {
       oneBalance: 0
     }
 
-    const bscBalance = holders[56].reduce((preValue, curValue) => +preValue + +curValue.balance, 0);
-    const movrBalance = holders[1285].reduce((preValue, curValue) => +preValue + +curValue.balance, 0);
-    const oneBalance = holders[1666600000].reduce((preValue, curValue) => +preValue + +curValue.balance, 0);
+    const bscBalance = holders[56].reduce((preValue, curValue) => +preValue + +curValue[totalType], 0);
+    const movrBalance = holders[1285].reduce((preValue, curValue) => +preValue + +curValue[totalType], 0);
+    const oneBalance = holders[1666600000].reduce((preValue, curValue) => +preValue + +curValue[totalType], 0);
     const totalBalance = bscBalance + movrBalance + oneBalance;
+
+    console.log(holders);
 
     return {
       bscBalance,
@@ -75,7 +84,7 @@ const Holders = () => {
       totalBalance,
       oneBalance
     }
-  }, [holders])
+  }, [holders, totalType])
 
   const isLoading = !balances.totalBalance;
 
@@ -87,6 +96,24 @@ const Holders = () => {
         Stake66 Holders.
       </Typography>
       <Grid container spacing={5} sx={{ mt: 1 }}>
+        <Grid item xs={12} sm={12} md={12}>
+          <Box sx={{ minWidth: 120, maxWidth: 250 }}>
+            <FormControl fullWidth>
+              <InputLabel id="total-by-label">Total By </InputLabel>
+              <Select
+                labelId="total-by-label"
+                id="total-by"
+                value={totalType}
+                label="Total By"
+                onChange={handleTotalTypeChange}
+              >
+                <MenuItem value="balanceToTEM">Balance To TEM</MenuItem>
+                <MenuItem value="balanceTEMValue">Balance TEM Value</MenuItem>
+                <MenuItem value="balance">Balance</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Box>Total Balance</Box>
           <Typography component="div" variant="h3" color="#7d0707" fontWeight="bold" id="totalBalance">
@@ -126,6 +153,7 @@ const Holders = () => {
           <strong>{holders[56]?.length} holders.</strong>
           <div style={{ height: 1200, width: "100%" }}>
             <DataGrid
+              onCellClick={(v) => console.log(v)}
               loading={isLoading}
               rows={holders[56] ?? []}
               columns={columns}

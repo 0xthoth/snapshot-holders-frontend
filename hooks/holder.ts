@@ -119,10 +119,29 @@ export const useStake66HoldersInfo = () => {
       })
     ]);
 
+    const bscHolders = holderList[0].map(h => {
+      return {
+        ...h,
+        chains: ['bsc', holderList[1].find(f => f.address === h.address) ? 'movr' : undefined, holderList[2].find(f => f.address === h.address) ? 'one' : undefined]
+      }
+    });
+    const movrHolders = holderList[0].map(h => {
+      return {
+        ...h,
+        chains: ['movr', holderList[0].find(f => f.address === h.address) ? 'bsc' : undefined, holderList[2].find(f => f.address === h.address) ? 'one' : undefined]
+      }
+    })
+    const oneHolders = holderList[0].map(h => {
+      return {
+        ...h,
+        chains: ['one', holderList[0].find(f => f.address === h.address) ? 'bsc' : undefined, holderList[1].find(f => f.address === h.address) ? 'movr' : undefined]
+      }
+    })
+
     setHolders({
-      56: holderList[0],
-      1285: holderList[1],
-      1666600000: holderList[2]
+      56: bscHolders,
+      1285: movrHolders,
+      1666600000: oneHolders
     });
   }, [data, movrData]);
 

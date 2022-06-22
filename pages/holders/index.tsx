@@ -26,8 +26,11 @@ import { ethers } from "ethers";
 const total_columns: GridColDef[] = [
   { field: "address", headerName: "Address", valueFormatter: ({ value }) => ethers.utils.getAddress(value), width: 400 },
   { field: "balance", headerName: "Balance", valueFormatter: ({ value }) => numberFormat.format(Number(value)), width: 150, align: "right" },
+  { field: "balanceToTEMAndBoost", headerName: "TEM balance", valueFormatter: ({ value }) => numberFormat.format(Number(value)), width: 200, align: "right" },
   { field: "balanceToTEM", headerName: "Balance To TEM", valueFormatter: ({ value }) => numberFormat.format(Number(value)), width: 200, align: "right" },
   { field: "balanceTEMValue", headerName: "Balance TEM Value", valueFormatter: ({ value }) => currencyFormatter.format(Number(value)), width: 200, align: "right" },
+
+
   {
     field: "chain", headerName: "Chains", width: 190, renderCell: ({ value }) => {
       return value.map((c: any) => {
@@ -91,13 +94,15 @@ const Holders = () => {
     const oneBalance = holders[1666600000].reduce((preValue, curValue) => +preValue + +curValue[totalType], 0);
     const totalBalance = bscBalance + movrBalance + oneBalance;
 
-    const result = Object.values([...holders[56], ...holders[1285], ...holders[1666600000]].reduce((acc, { id, balance, balanceTEMValue, balanceToTEM, networkId, address }) => {
+    const result = Object.values([...holders[56], ...holders[1285], ...holders[1666600000]].reduce((acc, { id, balance, balanceTEMValue, balanceToTEM, networkId, address, boost }) => {
+      const boostNumber = boost.replace('x', '');
       acc[id] = {
         id,
         address,
         balance: (acc[id] ? acc[id].balance : 0) + +balance,
         balanceTEMValue: (acc[id] ? acc[id].balanceTEMValue : 0) + +balanceTEMValue,
         balanceToTEM: (acc[id] ? acc[id].balanceToTEM : 0) + +balanceToTEM,
+        balanceToTEMAndBoost: (acc[id] ? acc[id].balanceToTEMAndBoost : 0) + (+balanceToTEM * +boostNumber),
         chain: acc[id]?.chain ? [...acc[id].chain, networkId] : [networkId]
       };
       return acc;

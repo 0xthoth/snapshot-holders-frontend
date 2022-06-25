@@ -348,7 +348,7 @@ export const NETWORKS: { [key: number]: INetwork } = {
       symbol: "ONE",
       decimals: 18,
     },
-    rpcUrls: ["https://api.harmony.one"],
+    rpcUrls: ["https://rpc.ankr.com/harmony"],
     blockExplorerUrls: ["https://explorer.harmony.one"],
     image: "/static/img/tokens/matic.svg",
     imageAltText: "BSC Logo",

@@ -143,7 +143,7 @@ export class Environment {
       case NetworkId.ONE:
         return this._get({
           key: `REACT_APP_ONE_NODE_URL`,
-          fallback: "https://api.harmony.one",
+          fallback: "https://rpc.ankr.com/harmony",
         });
     }
   };

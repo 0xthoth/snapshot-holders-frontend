@@ -73,6 +73,9 @@ export async function getWSWORDIndex({ networkID, provider }: IBaseAsyncThunk) {
 }
 
 
+
+
+// V2
 export const getHolderInfo = async ({ networkID, data }: {
   networkID: NetworkId;
   data: Array<any>
@@ -84,25 +87,24 @@ export const getHolderInfo = async ({ networkID, data }: {
   const userStakingBalanceQueries: any[] = [];
   const userPendingRewardQueries: any[] = [];
 
-
   data.forEach((holder) => {
     userBoostQueries.push({
-      address: iAddresses[networkID].WSWORD_MASTERCHEF,
+      address: "0xffC7B93b53BC5F4732b414295E989684702D0eb5",
       name: "getUserBoostMultipiler",
       params: [0, holder.address],
     });
     userStakedBlockQueries.push({
-      address: iAddresses[networkID].WSWORD_MASTERCHEF,
+      address: "0xffC7B93b53BC5F4732b414295E989684702D0eb5",
       name: "getUserStakeBlock",
       params: [0, holder.address],
     });
     userStakingBalanceQueries.push({
-      address: iAddresses[networkID].WSWORD_MASTERCHEF,
+      address: "0xffC7B93b53BC5F4732b414295E989684702D0eb5",
       name: "userInfo",
       params: [0, holder.address],
     });
     userPendingRewardQueries.push({
-      address: iAddresses[networkID].WSWORD_MASTERCHEF,
+      address: "0xffC7B93b53BC5F4732b414295E989684702D0eb5",
       name: "pendingReward",
       params: [0, holder.address, true],
     });
@@ -134,10 +136,6 @@ export const getHolderInfo = async ({ networkID, data }: {
     provider,
     networkID,
   });
-  const wIndex = await getWSWORDIndex({
-    provider,
-    networkID,
-  });
 
   if (
     !dataBoostQueries ||
@@ -150,22 +148,25 @@ export const getHolderInfo = async ({ networkID, data }: {
   const hds = data.map((d, i) => {
     const balance = ethers.utils.formatUnits(
       dataStakingBlanceQueries[i][0],
-      "ether"
+      9
     );
-    const balanceToTEM = Number(balance) * wIndex;
-    const balanceTEMValue = balanceToTEM * Number(mkPrice);
+    const balanceTEMValue = Number(balance) * Number(mkPrice);
 
     return {
       ...d,
       boost: `${Number(dataBoostQueries[i][0]) / 1000}x`,
       stakedBlock: `${currentBlock - Number(dataStakedBlockQueries[i][0])}`,
       staking: balance,
-      balanceToTEM,
+      balanceToTEM: 0,
       balanceTEMValue,
       reward: ethers.utils.formatUnits(
         dataPendingRewardQueries[i][0],
         "ether"
       ),
+      rewardx: +ethers.utils.formatUnits(
+        dataPendingRewardQueries[i][0],
+        "ether"
+      ) * Number(dataBoostQueries[i][0]) / 1000,
       networkId: networkID,
     };
   });

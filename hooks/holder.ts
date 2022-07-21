@@ -132,3 +132,47 @@ export const useStake66HoldersInfo = () => {
 
   return holders;
 };
+
+
+// V2
+export const useStake66V2Holders = (options: QueryOptions): UseQueryResult<any> => {
+  return useQuery(
+    "stake66_v2_holders",
+    async () => {
+      const response = await apolloExt<{
+        _meta: any; holders: Holder[]
+      }>(
+        stake66HoldersQuery,
+        "https://api.thegraph.com/subgraphs/name/0xthoth/stake66-v2-holders"
+      );
+
+      if (!response?.data.holders) return []
+      console.log("BSC V2 Last Block: ", response?.data?._meta?.block.number);
+      return response?.data.holders;
+    },
+    options
+  );
+};
+
+export const useStake66V2HoldersInfo = () => {
+  const { data } = useStake66V2Holders({});
+
+  const [holders, setHolders] = useState<Array<any>>([]);
+
+  useMemo(async () => {
+    if (!data) return [];
+
+    const holderList = await Promise.all([
+      getHolderInfo({
+        data,
+        networkID: 56
+      }),
+    ]);
+
+    const bscV2Holders = holderList[0]
+
+    setHolders(bscV2Holders);
+  }, [data]);
+
+  return holders;
+};
